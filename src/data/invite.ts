@@ -4,22 +4,22 @@ export const invite = {
 
   date: "2026년 3월 28일 토요일",
   time: "오후 5시",
-  venue: "",
+  venue: "메종드아나하 그랜드볼룸홀",
 
   location: {
-    address: "서울특별시 강남구 언주로 517 지하 1층",
+    address: "서울특별시 강남구 언주로 517 신라스테이호텔 역삼 지하 1층",
     googleMapUrl:
       "https://www.google.com/maps/place/%EB%A9%94%EC%A2%85%EB%93%9C%EC%95%84%EB%82%98%ED%95%98/data=!4m2!3m1!1s0x0:0xba0b85c121d17c22?sa=X&ved=1t:2428&ictx=111&cshid=1766921607285359",
   },
 
   contacts: {
     groom: {
-      name: "석우",
-      tel: "010-1234-5678",
+      name: "장석우",
+      tel: "010-2005-8527",
     },
     bride: {
-      name: "주영",
-      tel: "010-2345-6789",
+      name: "박주영",
+      tel: "010-8332-3341",
     },
   },
 
@@ -27,13 +27,15 @@ export const invite = {
     {
       group: "신랑측",
       items: [
-        { bank: "국민은행", number: "123-45-678901", holder: "장석우" },
-        { bank: "신한은행", number: "110-123-456789", holder: "장석우" },
+        { bank: "하나은행", number: "177-910539-09607", holder: "장석우" },
+        { bank: "테스트", number: "테스트", holder: "장석우" },
       ],
     },
     {
       group: "신부측",
-      items: [{ bank: "우리은행", number: "1002-123-456789", holder: "주영" }],
+      items: [
+        { bank: "카카오뱅크", number: "3333105871789 ", holder: "박주영" },
+      ],
     },
   ],
   site: {

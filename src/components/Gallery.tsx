@@ -8,6 +8,33 @@ export default function Gallery() {
   const images = invite.gallery;
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState(0);
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const [touchEndX, setTouchEndX] = useState<number | null>(null);
+
+  const SWIPE_THRESHOLD = 50; // px
+
+  function onTouchStart(e: React.TouchEvent) {
+    setTouchEndX(null);
+    setTouchStartX(e.targetTouches[0].clientX);
+  }
+
+  function onTouchMove(e: React.TouchEvent) {
+    setTouchEndX(e.targetTouches[0].clientX);
+  }
+
+  function onTouchEnd() {
+    if (touchStartX === null || touchEndX === null) return;
+
+    const delta = touchStartX - touchEndX;
+
+    if (delta > SWIPE_THRESHOLD) {
+      // 왼쪽으로 스와이프 → 다음
+      next();
+    } else if (delta < -SWIPE_THRESHOLD) {
+      // 오른쪽으로 스와이프 → 이전
+      prev();
+    }
+  }
 
   function openViewer(i: number) {
     setIndex(i);
@@ -90,11 +117,18 @@ export default function Gallery() {
             ›
           </button>
 
+          <p className="absolute bottom-5 text-white text-xs opacity-70">
+            좌우로 스와이프하여 넘길 수 있어요
+          </p>
+
           {/* 이미지 */}
           <img
             src={images[index]}
             alt={`viewer-${index}`}
             className="max-w-full max-h-full object-contain"
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
           />
         </div>
       )}
