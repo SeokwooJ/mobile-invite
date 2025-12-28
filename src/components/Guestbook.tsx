@@ -12,10 +12,13 @@ import {
   query,
   serverTimestamp,
   Timestamp,
+  doc,
+  updateDoc,
 } from "firebase/firestore";
 
 type Message = {
   id: string;
+  uid: string;
   name: string;
   text: string;
   createdAt?: Timestamp;
@@ -27,8 +30,32 @@ export default function Guestbook() {
   const [text, setText] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [sending, setSending] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingText, setEditingText] = useState("");
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const colRef = useMemo(() => collection(db, "guestbook"), []);
+
+  async function saveEdit(id: string) {
+    const uid = auth.currentUser?.uid;
+    if (!uid) {
+      setErrorMsg("인증 정보를 가져오지 못했어요.");
+      return;
+    }
+
+    const t = editingText.trim();
+    if (!t) return;
+
+    try {
+      await updateDoc(doc(db, "guestbook", id), {
+        text: t.slice(0, 300),
+      });
+      setEditingId(null);
+      setEditingText("");
+    } catch (e: any) {
+      setErrorMsg(`수정 실패: ${String(e?.code || e?.message || e)}`);
+    }
+  }
 
   useEffect(() => {
     // ✅ 사용자에게 “로그인 화면” 없이, 앱이 뒤에서 익명 로그인
@@ -44,6 +71,7 @@ export default function Guestbook() {
         const data = d.data() as any;
         return {
           id: d.id,
+          uid: data.uid ?? "",
           name: data.name ?? "",
           text: data.text ?? "",
           createdAt: data.createdAt,
@@ -109,21 +137,66 @@ export default function Guestbook() {
       </div>
 
       <div className="mt-10 space-y-3">
-        {messages.map((m) => (
-          <div key={m.id} className="rounded-2xl border p-4">
-            <div className="flex items-center justify-between gap-3">
-              <p className="text-sm font-semibold">{m.name}</p>
-              <p className="text-xs text-gray-500">
-                {m.createdAt
-                  ? new Date(m.createdAt.toMillis()).toLocaleString("ko-KR")
-                  : ""}
-              </p>
+        {messages.map((m) => {
+          const myUid = auth.currentUser?.uid;
+          const isMine = myUid && m.uid === myUid;
+          const isEditing = editingId === m.id;
+
+          return (
+            <div key={m.id} className="rounded-2xl border p-4">
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-sm font-semibold">{m.name}</p>
+
+                {isMine && !isEditing && (
+                  <button
+                    type="button"
+                    className="text-xs text-gray-600 underline"
+                    onClick={() => {
+                      setEditingId(m.id);
+                      setEditingText(m.text);
+                    }}
+                  >
+                    수정
+                  </button>
+                )}
+              </div>
+
+              {!isEditing ? (
+                <p className="text-sm text-gray-700 mt-2 whitespace-pre-wrap">
+                  {m.text}
+                </p>
+              ) : (
+                <div className="mt-3 space-y-2">
+                  <textarea
+                    value={editingText}
+                    onChange={(e) => setEditingText(e.target.value)}
+                    className="w-full rounded-xl border px-3 py-2 text-sm h-24 resize-none"
+                    maxLength={300}
+                  />
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      className="flex-1 rounded-xl bg-gray-900 text-white py-2 text-sm"
+                      onClick={() => saveEdit(m.id)}
+                    >
+                      저장
+                    </button>
+                    <button
+                      type="button"
+                      className="flex-1 rounded-xl border py-2 text-sm"
+                      onClick={() => {
+                        setEditingId(null);
+                        setEditingText("");
+                      }}
+                    >
+                      취소
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
-            <p className="text-sm text-gray-700 mt-2 whitespace-pre-wrap">
-              {m.text}
-            </p>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </Section>
   );
