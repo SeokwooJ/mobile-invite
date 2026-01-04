@@ -1,5 +1,23 @@
 @import "tailwindcss";
 
+@keyframes writeReveal {
+  from {
+    clip-path: inset(0 100% 0 0);
+    opacity: 0.2;
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+}
+
+.handwrite {
+  font-family: var(--font-handwrite), cursive;
+  font-weight: 400;
+  letter-spacing: 1.5px;
+  animation: writeReveal 1.8s ease-out 0.4s both;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;

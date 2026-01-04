@@ -7,10 +7,12 @@ import Contact from "@/components/Contact";
 import Account from "@/components/Account";
 import Share from "@/components/Share";
 import Guestbook from "@/components/Guestbook";
+import CoverHero from "@/components/CoverHero";
 
 export default function Home() {
   return (
     <main className="bg-white text-gray-900">
+      <CoverHero />
       <Cover />
       <Greeting />
       <Info />
