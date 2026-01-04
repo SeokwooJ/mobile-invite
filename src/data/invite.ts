@@ -1,6 +1,49 @@
-export const invite = {
-  groom: "석우",
-  bride: "주영",
+export type Invite = {
+  groom: string;
+  bride: string;
+
+  cover: {
+    image: string;
+    tagline: string;
+  };
+
+  date: string;
+  time: string;
+  venue: string;
+
+  location: {
+    address: string;
+    googleMapUrl: string;
+  };
+
+  contacts: {
+    groom: { name: string; tel: string };
+    bride: { name: string; tel: string };
+  };
+
+  accounts: Array<{
+    group: string;
+    items: Array<{ bank: string; number: string; holder: string }>;
+  }>;
+
+  site: {
+    title: string;
+    description: string;
+    url: string;
+    ogImage: string;
+  };
+
+  message: string;
+  gallery: string[];
+};
+
+export const invite: Invite = {
+  groom: "장석우",
+  bride: "박주영",
+  cover: {
+    image: "images/cover.jpg",
+    tagline: "Invite Our Wedding",
+  },
 
   date: "2026년 3월 28일 토요일",
   time: "오후 5시",
@@ -13,14 +56,8 @@ export const invite = {
   },
 
   contacts: {
-    groom: {
-      name: "장석우",
-      tel: "010-2005-8527",
-    },
-    bride: {
-      name: "박주영",
-      tel: "010-8332-3341",
-    },
+    groom: { name: "장석우", tel: "010-2005-8527" },
+    bride: { name: "박주영", tel: "010-8332-3341" },
   },
 
   accounts: [
@@ -34,17 +71,16 @@ export const invite = {
     {
       group: "신부측",
       items: [
-        { bank: "카카오뱅크", number: "3333105871789 ", holder: "박주영" },
+        { bank: "카카오뱅크", number: "3333105871789", holder: "박주영" },
       ],
     },
   ],
+
   site: {
     title: "석우 ♥ 주영 모바일 청첩장",
-    description: "소중한 분들을 초대합니다. 2025년 3월 28일 오후 5시",
-    // 배포 후 실제 주소로 바꿀 것 (GitHub Pages 주소)
+    description: "소중한 분들을 초대합니다. 2026년 3월 28일 오후 5시",
     url: "https://SeokwooJ.github.io/mobile-invite/",
-    // public/og.png 파일을 만들 거라서 이렇게 둠
-    ogImage: "/og.png",
+    ogImage: "og.png",
   },
 
   message: `
