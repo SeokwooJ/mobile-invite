@@ -13,30 +13,34 @@ export default function MusicPlayer() {
   useEffect(() => {
     // basePath 자동 감지 (GitHub Pages용)
     if (typeof window !== "undefined" && invite.music?.url) {
-      // 현재 경로에서 basePath 추출 (예: /mobile-invite)
-      const pathname = window.location.pathname;
-      let basePath = "";
-
-      // GitHub Pages는 /{repo-name}/ 형태
-      const pathParts = pathname.split("/").filter(Boolean);
-      if (pathParts.length > 0 && pathParts[0] === "mobile-invite") {
-        basePath = "/mobile-invite";
-      }
-
       let url = invite.music.url;
 
-      // 상대 경로이고 basePath가 있으면 추가
+      // 절대 경로가 아니면 basePath 추가
       if (
         url.startsWith("/") &&
         !url.startsWith("//") &&
         !url.startsWith("http")
       ) {
-        url = basePath + url;
+        const pathname = window.location.pathname;
+        const pathParts = pathname.split("/").filter(Boolean);
+
+        // GitHub Pages에서 basePath가 있는 경우 (예: /mobile-invite/)
+        if (pathParts.length > 0 && pathParts[0] === "mobile-invite") {
+          url = `/mobile-invite${url}`;
+        }
+        // 루트 경로에서도 basePath가 있을 수 있으므로 확인
+        else if (pathname.startsWith("/mobile-invite")) {
+          url = `/mobile-invite${url}`;
+        }
       }
 
       // 파일명 공백을 URL 인코딩
       url = url.replace(/ /g, "%20");
       setMusicUrl(url);
+
+      // 디버깅용 콘솔 로그
+      console.log("Music URL:", url);
+      console.log("Current pathname:", window.location.pathname);
     } else if (invite.music?.url) {
       // 서버 사이드 렌더링 시 (개발 환경)
       setMusicUrl(invite.music.url.replace(/ /g, "%20"));

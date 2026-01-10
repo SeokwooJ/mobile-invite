@@ -20,9 +20,22 @@ function LinkButton({ href, label }: { href: string; label: string }) {
 export default function Location() {
   const loc = invite.location;
   const [isMounted, setIsMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
+    // 모바일 감지
+    const checkMobile = () => {
+      setIsMobile(
+        window.innerWidth < 768 ||
+          /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+            navigator.userAgent
+          )
+      );
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   // Google Maps Embed URL 생성
@@ -46,12 +59,12 @@ export default function Location() {
           <p className="text-sm text-[#8b7a6a]">{loc.address}</p>
         </div>
 
-        {/* 지도 미리보기: API 없이 Google Maps Embed */}
-        <div
-          className="rounded-xl overflow-hidden border-2 border-[#e8e3d8] shadow-md mb-6 bg-[#f5f5f5] relative"
-          style={{ minHeight: "300px" }}
-        >
-          {isMounted && (
+        {/* 지도 미리보기: 모바일에서는 숨김 */}
+        {!isMobile && isMounted && (
+          <div
+            className="rounded-xl overflow-hidden border-2 border-[#e8e3d8] shadow-md mb-6 bg-[#f5f5f5] relative"
+            style={{ minHeight: "300px" }}
+          >
             <iframe
               title="map"
               width="100%"
@@ -71,13 +84,17 @@ export default function Location() {
                 display: "block",
               }}
             />
-          )}
-          {!isMounted && (
-            <div className="w-full h-[400px] flex items-center justify-center text-[#8b7a6a]">
-              지도를 불러오는 중...
-            </div>
-          )}
-        </div>
+          </div>
+        )}
+
+        {/* 모바일에서는 안내 메시지 */}
+        {isMobile && (
+          <div className="rounded-xl border-2 border-[#e8e3d8] bg-[#faf9f6] p-6 mb-6 text-center">
+            <p className="text-sm text-[#6b5d4a] mb-3">
+              아래 버튼을 눌러 지도 앱으로 이동하세요
+            </p>
+          </div>
+        )}
 
         {/* 지도 선택 버튼 */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
