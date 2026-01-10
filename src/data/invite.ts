@@ -39,7 +39,7 @@ export type Invite = {
 
   message: string;
   gallery: string[];
-  
+
   music?: {
     url: string;
     title?: string;

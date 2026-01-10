@@ -21,6 +21,8 @@ export default function MusicPlayer() {
     }
 
     let url = invite.music.url;
+    const hostname = window.location.hostname;
+    const pathname = window.location.pathname;
 
     // 절대 경로가 아니면 basePath 추가
     if (
@@ -28,9 +30,10 @@ export default function MusicPlayer() {
       !url.startsWith("//") &&
       !url.startsWith("http")
     ) {
-      const hostname = window.location.hostname;
-      const pathname = window.location.pathname;
-      const isLocalhost = hostname === "localhost" || hostname === "127.0.0.1" || hostname === "0.0.0.0";
+      const isLocalhost =
+        hostname === "localhost" ||
+        hostname === "127.0.0.1" ||
+        hostname === "0.0.0.0";
 
       // 로컬 개발 환경이 아닌 경우 basePath 추가
       if (!isLocalhost) {
@@ -160,9 +163,13 @@ export default function MusicPlayer() {
             onClick={togglePlay}
             disabled={!isReady}
             className={`w-10 h-10 flex items-center justify-center rounded-full text-white transition-colors shadow-md ${
-              isReady ? "bg-[#5a4a3a] hover:bg-[#4a3d30]" : "bg-gray-400 cursor-not-allowed"
+              isReady
+                ? "bg-[#5a4a3a] hover:bg-[#4a3d30]"
+                : "bg-gray-400 cursor-not-allowed"
             }`}
-            aria-label={isPlaying ? "일시정지" : isReady ? "재생" : "로딩 중..."}
+            aria-label={
+              isPlaying ? "일시정지" : isReady ? "재생" : "로딩 중..."
+            }
           >
             {isPlaying ? (
               <svg
