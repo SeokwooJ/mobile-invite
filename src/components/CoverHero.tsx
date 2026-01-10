@@ -11,26 +11,52 @@ export default function CoverHero() {
 
   useEffect(() => {
     // 모바일에서 스크롤 시 크기 변경 방지를 위해 초기 높이 고정
-    const setFixedHeight = () => {
-      if (typeof window !== "undefined") {
-        // 모바일에서만 고정 높이 사용
-        const isMobile = window.innerWidth < 640; // sm breakpoint
-        if (isMobile) {
-          const height = window.innerHeight;
-          setViewportHeight(`${height}px`);
-        } else {
-          setViewportHeight("100svh");
-        }
-      }
-    };
+    if (typeof window === "undefined") return;
 
-    setFixedHeight();
-    // 리사이즈 시에만 업데이트 (스크롤 시에는 업데이트 안 함)
-    window.addEventListener("resize", setFixedHeight);
+    const isMobile = window.innerWidth < 640; // sm breakpoint
     
-    return () => {
-      window.removeEventListener("resize", setFixedHeight);
-    };
+    if (isMobile) {
+      // 초기 높이를 한 번만 설정하고 절대 변경하지 않음
+      const initialHeight = window.innerHeight;
+      setViewportHeight(`${initialHeight}px`);
+      
+      // CSS 변수로도 설정하여 더 확실하게 고정
+      document.documentElement.style.setProperty('--initial-vh', `${initialHeight}px`);
+      
+      // 스크롤 이벤트를 감지하되 높이는 변경하지 않음 (디버깅용)
+      let lastHeight = initialHeight;
+      const checkHeight = () => {
+        const currentHeight = window.innerHeight;
+        // 높이가 변경되었어도 무시하고 초기 높이 유지
+        if (Math.abs(currentHeight - lastHeight) > 10) {
+          // 리사이즈만 반영 (주소창 변화는 무시)
+          lastHeight = currentHeight;
+        }
+      };
+      
+      // 리사이즈 이벤트만 처리 (스크롤로 인한 높이 변화는 무시)
+      let resizeTimer: NodeJS.Timeout;
+      const handleResize = () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+          // 실제 리사이즈만 반영 (화면 회전 등)
+          const newHeight = window.innerHeight;
+          if (Math.abs(newHeight - initialHeight) > 50) {
+            setViewportHeight(`${newHeight}px`);
+            document.documentElement.style.setProperty('--initial-vh', `${newHeight}px`);
+          }
+        }, 150);
+      };
+      
+      window.addEventListener("resize", handleResize);
+      
+      return () => {
+        window.removeEventListener("resize", handleResize);
+        clearTimeout(resizeTimer);
+      };
+    } else {
+      setViewportHeight("100svh");
+    }
   }, []);
 
   const handleScrollDown = () => {
@@ -45,11 +71,12 @@ export default function CoverHero() {
   };
 
   return (
-    <section 
+    <section
       className="relative w-full overflow-hidden bg-[#faf9f6]"
-      style={{ 
+      style={{
         height: viewportHeight,
-        minHeight: "100svh"
+        minHeight: viewportHeight,
+        maxHeight: viewportHeight,
       }}
     >
       {/* 편지지 느낌의 배경 */}
@@ -67,13 +94,11 @@ export default function CoverHero() {
       <FallingFlowers count={18} />
 
       {/* 사진 영역 */}
-      <div 
-        className="relative z-20 flex items-center justify-center px-0 sm:px-4 py-0 sm:py-20 h-full"
-      >
-        <div 
+      <div className="relative z-20 flex items-center justify-center px-0 sm:px-4 py-0 sm:py-20 h-full">
+        <div
           className="relative w-full sm:h-auto sm:max-w-[560px]"
-          style={{ 
-            height: "100%"
+          style={{
+            height: "100%",
           }}
         >
           {/* 사진 */}
