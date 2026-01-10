@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Section from "./Section";
 import { invite } from "@/data/invite";
 
@@ -16,6 +19,16 @@ function LinkButton({ href, label }: { href: string; label: string }) {
 
 export default function Location() {
   const loc = invite.location;
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // Google Maps Embed URL 생성
+  const mapUrl = `https://www.google.com/maps?q=${encodeURIComponent(
+    loc.address
+  )}&output=embed&hl=ko&z=16`;
 
   return (
     <Section>
@@ -30,17 +43,34 @@ export default function Location() {
           <p className="text-sm text-[#8b7a6a]">{loc.address}</p>
         </div>
 
-        {/* 지도 미리보기: API 없이 Google Maps Embed (가장 안정적) */}
-        <div className="rounded-xl overflow-hidden border-2 border-[#e8e3d8] shadow-md mb-6">
-          <iframe
-            title="map"
-            className="w-full h-72"
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            src={`https://www.google.com/maps?q=${encodeURIComponent(
-              loc.address
-            )}&output=embed`}
-          />
+        {/* 지도 미리보기: API 없이 Google Maps Embed */}
+        <div className="rounded-xl overflow-hidden border-2 border-[#e8e3d8] shadow-md mb-6 bg-[#f5f5f5] relative" style={{ minHeight: '300px' }}>
+          {isMounted && (
+            <iframe
+              title="map"
+              width="100%"
+              height="400"
+              frameBorder="0"
+              scrolling="no"
+              marginHeight={0}
+              marginWidth={0}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              src={mapUrl}
+              style={{
+                border: 0,
+                width: '100%',
+                height: '400px',
+                display: 'block',
+              }}
+            />
+          )}
+          {!isMounted && (
+            <div className="w-full h-[400px] flex items-center justify-center text-[#8b7a6a]">
+              지도를 불러오는 중...
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 gap-3">
@@ -51,7 +81,7 @@ export default function Location() {
           <p className="mb-1">
             * 길찾기 버튼을 누르면 해당 앱/웹으로 이동합니다.
           </p>
-          <p>* iPhone에서는 '카카오내비'가 설치되어 있어야 앱으로 열립니다.</p>
+          <p>* 모바일에서는 지도가 보이지 않을 경우 위 버튼을 눌러주세요.</p>
         </div>
       </div>
     </Section>
