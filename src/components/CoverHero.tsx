@@ -2,10 +2,36 @@
 
 import { invite } from "@/data/invite";
 import FallingFlowers from "./FallingFlowers";
+import { useEffect, useState } from "react";
 
 export default function CoverHero() {
   const coverImage =
     invite.cover?.image ?? invite.gallery?.[0] ?? "images/cover.jpg";
+  const [viewportHeight, setViewportHeight] = useState("100svh");
+
+  useEffect(() => {
+    // 모바일에서 스크롤 시 크기 변경 방지를 위해 초기 높이 고정
+    const setFixedHeight = () => {
+      if (typeof window !== "undefined") {
+        // 모바일에서만 고정 높이 사용
+        const isMobile = window.innerWidth < 640; // sm breakpoint
+        if (isMobile) {
+          const height = window.innerHeight;
+          setViewportHeight(`${height}px`);
+        } else {
+          setViewportHeight("100svh");
+        }
+      }
+    };
+
+    setFixedHeight();
+    // 리사이즈 시에만 업데이트 (스크롤 시에는 업데이트 안 함)
+    window.addEventListener("resize", setFixedHeight);
+    
+    return () => {
+      window.removeEventListener("resize", setFixedHeight);
+    };
+  }, []);
 
   const handleScrollDown = () => {
     // ID로 직접 다음 섹션 찾기
@@ -19,7 +45,13 @@ export default function CoverHero() {
   };
 
   return (
-    <section className="relative min-h-[100svh] w-full overflow-hidden bg-[#faf9f6]">
+    <section 
+      className="relative w-full overflow-hidden bg-[#faf9f6]"
+      style={{ 
+        height: viewportHeight,
+        minHeight: "100svh"
+      }}
+    >
       {/* 편지지 느낌의 배경 */}
       <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(250,249,246,0.95),rgba(240,238,230,0.98))] z-0" />
 
@@ -35,8 +67,15 @@ export default function CoverHero() {
       <FallingFlowers count={18} />
 
       {/* 사진 영역 */}
-      <div className="relative z-20 flex min-h-[100svh] items-center justify-center px-0 sm:px-4 py-0 sm:py-20">
-        <div className="relative w-full h-[100svh] sm:h-auto sm:max-w-[560px]">
+      <div 
+        className="relative z-20 flex items-center justify-center px-0 sm:px-4 py-0 sm:py-20 h-full"
+      >
+        <div 
+          className="relative w-full sm:h-auto sm:max-w-[560px]"
+          style={{ 
+            height: "100%"
+          }}
+        >
           {/* 사진 */}
           <div className="relative w-full h-full">
             <img
@@ -51,6 +90,11 @@ export default function CoverHero() {
                 sm:border-2
                 sm:border-[#e8e3d8]
               "
+              style={{
+                willChange: "transform",
+                transform: "translateZ(0)",
+                backfaceVisibility: "hidden",
+              }}
             />
 
             {/* 사진 안 이름 (우아한 필기체) */}
