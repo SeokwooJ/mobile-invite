@@ -12,7 +12,7 @@ export default function Cover() {
         </p>
 
         <h1
-          className="text-3xl sm:text-4xl font-bold mb-4 text-[#5a4a3a] tracking-wide"
+          className="text-2xl sm:text-4xl font-bold mb-4 text-[#5a4a3a] tracking-wide whitespace-nowrap px-2"
           style={{ fontFamily: "serif", fontWeight: 700 }}
         >
           {invite.groom} ♥ {invite.bride}

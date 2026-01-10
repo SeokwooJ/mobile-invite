@@ -14,15 +14,18 @@ export default function CoverHero() {
     if (typeof window === "undefined") return;
 
     const isMobile = window.innerWidth < 640; // sm breakpoint
-    
+
     if (isMobile) {
       // 초기 높이를 한 번만 설정하고 절대 변경하지 않음
       const initialHeight = window.innerHeight;
       setViewportHeight(`${initialHeight}px`);
-      
+
       // CSS 변수로도 설정하여 더 확실하게 고정
-      document.documentElement.style.setProperty('--initial-vh', `${initialHeight}px`);
-      
+      document.documentElement.style.setProperty(
+        "--initial-vh",
+        `${initialHeight}px`
+      );
+
       // 스크롤 이벤트를 감지하되 높이는 변경하지 않음 (디버깅용)
       let lastHeight = initialHeight;
       const checkHeight = () => {
@@ -33,7 +36,7 @@ export default function CoverHero() {
           lastHeight = currentHeight;
         }
       };
-      
+
       // 리사이즈 이벤트만 처리 (스크롤로 인한 높이 변화는 무시)
       let resizeTimer: NodeJS.Timeout;
       const handleResize = () => {
@@ -43,13 +46,16 @@ export default function CoverHero() {
           const newHeight = window.innerHeight;
           if (Math.abs(newHeight - initialHeight) > 50) {
             setViewportHeight(`${newHeight}px`);
-            document.documentElement.style.setProperty('--initial-vh', `${newHeight}px`);
+            document.documentElement.style.setProperty(
+              "--initial-vh",
+              `${newHeight}px`
+            );
           }
         }, 150);
       };
-      
+
       window.addEventListener("resize", handleResize);
-      
+
       return () => {
         window.removeEventListener("resize", handleResize);
         clearTimeout(resizeTimer);
