@@ -73,13 +73,21 @@ export default function Location() {
           )}
         </div>
 
-        <div className="grid grid-cols-1 gap-3">
-          <LinkButton href={loc.googleMapUrl} label="구글지도로 길찾기" />
+        {/* 지도 선택 버튼 */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <LinkButton href={loc.googleMapUrl} label="구글지도" />
+          {loc.kakaoMapUrl && (
+            <LinkButton href={loc.kakaoMapUrl} label="카카오맵" />
+          )}
+          {loc.naverMapUrl && (
+            <LinkButton href={loc.naverMapUrl} label="네이버지도" />
+          )}
         </div>
+
 
         <div className="mt-6 text-xs text-[#8b7a6a] leading-relaxed">
           <p className="mb-1">
-            * 길찾기 버튼을 누르면 해당 앱/웹으로 이동합니다.
+            * 지도 버튼을 누르면 해당 앱/웹으로 이동합니다.
           </p>
           <p>* 모바일에서는 지도가 보이지 않을 경우 위 버튼을 눌러주세요.</p>
         </div>
