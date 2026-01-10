@@ -1,14 +1,30 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import Section from "./Section";
 import { invite } from "@/data/invite";
+import "leaflet/dist/leaflet.css";
 
-declare global {
-  interface Window {
-    kakao: any;
-  }
-}
+// Leaflet은 SSR을 지원하지 않으므로 동적 import로 클라이언트에서만 로드
+const MapContainer = dynamic(
+  () => import("react-leaflet").then((mod) => mod.MapContainer),
+  { ssr: false }
+);
+const TileLayer = dynamic(
+  () => import("react-leaflet").then((mod) => mod.TileLayer),
+  { ssr: false }
+);
+const Marker = dynamic(
+  () => import("react-leaflet").then((mod) => mod.Marker),
+  { ssr: false }
+);
+const Popup = dynamic(
+  () => import("react-leaflet").then((mod) => mod.Popup),
+  { ssr: false }
+);
+
+// Leaflet 마커 아이콘 설정은 useEffect에서 처리
 
 function LinkButton({ href, label }: { href: string; label: string }) {
   return (
@@ -26,122 +42,22 @@ function LinkButton({ href, label }: { href: string; label: string }) {
 export default function Location() {
   const loc = invite.location;
   const [isMounted, setIsMounted] = useState(false);
-  const [mapLoaded, setMapLoaded] = useState(false);
-  const mapContainerRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<any>(null);
 
   useEffect(() => {
     setIsMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (!isMounted || !mapContainerRef.current || !loc.latitude || !loc.longitude) {
-      return;
+    
+    // Leaflet 마커 아이콘 설정 (Next.js에서 필요)
+    if (typeof window !== "undefined") {
+      import("leaflet").then((L) => {
+        delete (L.default.Icon.Default.prototype as any)._getIconUrl;
+        L.default.Icon.Default.mergeOptions({
+          iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png",
+          iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
+          shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
+        });
+      });
     }
-
-    // 카카오맵 SDK 로드 확인 및 지도 생성
-    const loadKakaoMap = () => {
-      // 카카오맵 SDK가 이미 로드되어 있으면 바로 사용
-      if (window.kakao && window.kakao.maps) {
-        createMap();
-        return;
-      }
-
-      // SDK가 이미 로드 중이면 스크립트 추가하지 않음
-      if (document.querySelector('script[src*="dapi.kakao.com/v2/maps/sdk.js"]')) {
-        // 스크립트가 로드 중이면 로드 완료까지 대기
-        const checkKakao = setInterval(() => {
-          if (window.kakao && window.kakao.maps) {
-            clearInterval(checkKakao);
-            window.kakao.maps.load(() => {
-              createMap();
-            });
-          }
-        }, 100);
-        return;
-      }
-
-      // SDK가 없으면 직접 로드 시도
-      // 카카오맵 API 키 (환경변수에서 가져오거나 없으면 기본 사용)
-      const apiKey = process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY || "";
-      const script = document.createElement("script");
-      script.src = apiKey
-        ? `//dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}&autoload=false`
-        : `//dapi.kakao.com/v2/maps/sdk.js?autoload=false`;
-      script.async = true;
-      script.onload = () => {
-        if (window.kakao && window.kakao.maps) {
-          window.kakao.maps.load(() => {
-            createMap();
-          });
-        } else {
-          console.warn("카카오맵 SDK를 로드할 수 없습니다. 링크로만 이동 가능합니다.");
-          setMapLoaded(false);
-        }
-      };
-      script.onerror = () => {
-        console.warn("카카오맵 SDK 로드 실패. 링크로만 이동 가능합니다.");
-        setMapLoaded(false);
-      };
-      document.head.appendChild(script);
-    };
-
-    const createMap = () => {
-      if (!mapContainerRef.current || mapRef.current) return;
-
-      try {
-        const container = mapContainerRef.current;
-        const options = {
-          center: new window.kakao.maps.LatLng(loc.latitude!, loc.longitude!),
-          level: 3,
-        };
-
-        const map = new window.kakao.maps.Map(container, options);
-        mapRef.current = map;
-
-        // 마커 생성
-        const markerPosition = new window.kakao.maps.LatLng(
-          loc.latitude!,
-          loc.longitude!
-        );
-        const marker = new window.kakao.maps.Marker({
-          position: markerPosition,
-        });
-        marker.setMap(map);
-
-        // 커스텀 오버레이로 장소명 표시
-        const overlayContent = `
-          <div style="padding:8px 12px;background:white;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.15);font-size:12px;font-weight:bold;color:#333;white-space:nowrap;">
-            ${loc.address}
-          </div>
-        `;
-
-        const customOverlay = new window.kakao.maps.CustomOverlay({
-          position: markerPosition,
-          content: overlayContent,
-          yAnchor: 2.2,
-        });
-        customOverlay.setMap(map);
-
-        setMapLoaded(true);
-      } catch (error) {
-        console.error("카카오맵 생성 실패:", error);
-        setMapLoaded(false);
-      }
-    };
-
-    // 약간의 지연 후 SDK 로드 시도
-    const timer = setTimeout(() => {
-      loadKakaoMap();
-    }, 100);
-
-    return () => {
-      clearTimeout(timer);
-      if (mapRef.current) {
-        mapRef.current = null;
-      }
-    };
-  }, [isMounted, loc.latitude, loc.longitude, loc.address]);
+  }, []);
 
   // 네이버지도 링크용 URL
   const naverMapLinkUrl =
@@ -172,7 +88,7 @@ export default function Location() {
           <p className="text-sm text-[#8b7a6a]">{loc.address}</p>
         </div>
 
-        {/* 네이버지도 링크 + 구글지도 iframe 표시 */}
+        {/* 네이버지도 링크 + Leaflet 지도 미리보기 */}
         {isMounted ? (
           <div className="space-y-4">
             {/* 네이버지도 링크 (클릭 가능한 카드) - 가장 위에 표시 */}
@@ -198,32 +114,29 @@ export default function Location() {
               </div>
             </a>
 
-            {/* 카카오맵 지도 미리보기 */}
+            {/* Leaflet 지도 미리보기 - API 키 불필요, 모바일에서도 작동 */}
             {loc.latitude && loc.longitude ? (
               <div className="space-y-2">
-                <div
-                  ref={mapContainerRef}
-                  className="rounded-xl overflow-hidden border-2 border-[#FEE500] shadow-md bg-[#f5f5f5] relative"
-                  style={{ width: "100%", height: "400px", minHeight: "400px" }}
-                >
-                  {!mapLoaded && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-[#f5f5f5]">
-                      <div className="text-center">
-                        <div className="text-[#8b7a6a] text-sm mb-2">
-                          지도를 불러오는 중...
-                        </div>
-                        {kakaoMapEmbedUrl && (
-                          <a
-                            href={kakaoMapEmbedUrl}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="inline-block bg-[#FEE500] text-black px-4 py-2 rounded-full text-xs font-medium hover:bg-[#FDD835] transition-colors"
-                          >
-                            카카오맵에서 보기
-                          </a>
-                        )}
-                      </div>
-                    </div>
+                <div className="rounded-xl overflow-hidden border-2 border-[#e8e3d8] shadow-md bg-[#f5f5f5] relative" style={{ height: "400px", width: "100%" }}>
+                  {isMounted && (
+                    <MapContainer
+                      center={[loc.latitude!, loc.longitude!]}
+                      zoom={16}
+                      style={{ height: "100%", width: "100%", zIndex: 0 }}
+                      scrollWheelZoom={false}
+                    >
+                      <TileLayer
+                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                      />
+                      <Marker position={[loc.latitude!, loc.longitude!]}>
+                        <Popup>
+                          <div className="text-sm font-semibold text-[#5a4a3a]">
+                            {loc.address}
+                          </div>
+                        </Popup>
+                      </Marker>
+                    </MapContainer>
                   )}
                 </div>
                 {kakaoMapEmbedUrl && (
