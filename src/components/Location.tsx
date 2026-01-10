@@ -45,18 +45,22 @@ export default function Location() {
   useEffect(() => {
     setIsMounted(true);
 
-    // Leaflet 마커 아이콘 설정 (Next.js에서 필요)
+    // Leaflet 마커 아이콘 설정 (Next.js에서 필요) - 더 예쁜 커스텀 마커
     if (typeof window !== "undefined") {
       import("leaflet").then((L) => {
         delete (L.default.Icon.Default.prototype as any)._getIconUrl;
-        L.default.Icon.Default.mergeOptions({
-          iconRetinaUrl:
-            "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png",
-          iconUrl:
-            "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
-          shadowUrl:
-            "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
+        
+        // 더 예쁜 커스텀 마커 사용 (빨간색 핀)
+        const customIcon = L.default.icon({
+          iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
+          shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
+          iconSize: [25, 41],
+          iconAnchor: [12, 41],
+          popupAnchor: [1, -34],
+          shadowSize: [41, 41],
         });
+        
+        L.default.Marker.prototype.options.icon = customIcon;
       });
     }
   }, []);
@@ -80,22 +84,29 @@ export default function Location() {
         {/* Leaflet 지도 미리보기 - API 키 불필요, 모바일에서도 작동 */}
         {isMounted && loc.latitude && loc.longitude ? (
           <div
-            className="rounded-xl overflow-hidden border-2 border-[#e8e3d8] shadow-md bg-[#f5f5f5] relative mb-6"
-            style={{ height: "400px", width: "100%" }}
+            className="rounded-xl overflow-hidden border-2 border-[#d4c4b0] shadow-lg bg-white relative mb-6"
+            style={{ height: "450px", width: "100%" }}
           >
             <MapContainer
               center={[loc.latitude!, loc.longitude!]}
-              zoom={16}
+              zoom={17}
               style={{ height: "100%", width: "100%", zIndex: 0 }}
               scrollWheelZoom={false}
+              className="rounded-lg"
+              zoomControl={true}
             >
               <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+                url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+                subdomains="abcd"
+                maxZoom={19}
               />
               <Marker position={[loc.latitude!, loc.longitude!]}>
-                <Popup>
-                  <div className="text-sm font-semibold text-[#5a4a3a]">
+                <Popup className="custom-popup" autoClose={false} closeOnClick={false}>
+                  <div className="text-sm font-semibold text-[#5a4a3a] py-1">
+                    {invite.venue}
+                  </div>
+                  <div className="text-xs text-[#8b7a6a]">
                     {loc.address}
                   </div>
                 </Popup>
@@ -103,7 +114,7 @@ export default function Location() {
             </MapContainer>
           </div>
         ) : (
-          <div className="w-full h-[400px] flex items-center justify-center text-[#8b7a6a] rounded-xl border-2 border-[#e8e3d8] bg-[#f5f5f5] mb-6">
+          <div className="w-full h-[450px] flex items-center justify-center text-[#8b7a6a] rounded-xl border-2 border-[#e8e3d8] bg-[#f5f5f5] mb-6">
             지도를 불러오는 중...
           </div>
         )}
