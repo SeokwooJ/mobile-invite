@@ -44,8 +44,10 @@ export default function Location() {
     }
 
     // Google Maps API 키 (fallback 포함)
-    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "AIzaSyC69K-tY1IoQTquNXQjz1QLFoMYOlJWo7g";
-    
+    const apiKey =
+      process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ||
+      "AIzaSyC69K-tY1IoQTquNXQjz1QLFoMYOlJWo7g";
+
     console.log("=== Google Maps Debug ===");
     console.log("API Key (exists):", !!apiKey);
     console.log("API Key (first 10):", apiKey?.substring(0, 10) + "...");
@@ -96,9 +98,12 @@ export default function Location() {
       script.src = scriptUrl;
       script.async = true;
       script.defer = true;
-      
-      console.log("Google Maps API 스크립트 로드 시작:", scriptUrl.replace(apiKey, "API_KEY_HIDDEN"));
-      
+
+      console.log(
+        "Google Maps API 스크립트 로드 시작:",
+        scriptUrl.replace(apiKey, "API_KEY_HIDDEN")
+      );
+
       script.onload = () => {
         console.log("Google Maps API 스크립트 로드 완료");
         if (window.google && window.google.maps) {
@@ -122,7 +127,7 @@ export default function Location() {
         console.error("지도 컨테이너가 없습니다.");
         return;
       }
-      
+
       if (googleMapRef.current) {
         console.warn("지도가 이미 생성되었습니다.");
         return;
@@ -130,7 +135,7 @@ export default function Location() {
 
       try {
         console.log("지도 생성 시작:", loc.latitude, loc.longitude);
-        
+
         const mapOptions = {
           center: {
             lat: loc.latitude!,
@@ -138,38 +143,17 @@ export default function Location() {
           },
           zoom: 17,
           mapTypeId: window.google.maps.MapTypeId.ROADMAP,
-          styles: [
-            {
-              featureType: "all",
-              elementType: "geometry",
-              stylers: [{ color: "#f5f5f5" }],
-            },
-            {
-              featureType: "water",
-              elementType: "geometry",
-              stylers: [{ color: "#e8e3d8" }],
-            },
-            {
-              featureType: "road",
-              elementType: "geometry",
-              stylers: [{ color: "#ffffff" }],
-            },
-            {
-              featureType: "road",
-              elementType: "labels.text.fill",
-              stylers: [{ color: "#5a4a3a" }],
-            },
-            {
-              featureType: "poi",
-              elementType: "labels",
-              stylers: [{ visibility: "off" }],
-            },
-          ],
           disableDefaultUI: false,
           zoomControl: true,
+          zoomControlOptions: {
+            position: window.google.maps.ControlPosition.RIGHT_CENTER,
+          },
           mapTypeControl: false,
           streetViewControl: false,
           fullscreenControl: true,
+          fullscreenControlOptions: {
+            position: window.google.maps.ControlPosition.RIGHT_TOP,
+          },
         };
 
         const map = new window.google.maps.Map(mapRef.current, mapOptions);
@@ -182,18 +166,18 @@ export default function Location() {
             lng: loc.longitude!,
           },
           map: map,
-          title: loc.address,
+          title: invite.venue,
           animation: window.google.maps.Animation.DROP,
         });
 
         // 정보창 생성
         const infoWindow = new window.google.maps.InfoWindow({
           content: `
-            <div style="padding: 8px; text-align: center;">
-              <div style="font-weight: 600; color: #5a4a3a; font-size: 14px; margin-bottom: 4px;">
+            <div style="padding: 14px 16px; text-align: center; min-width: 220px; max-width: 280px;">
+              <div style="font-weight: 500; color: #5a4a3a; font-size: 15px; margin-bottom: 8px; font-family: 'Noto Serif KR', serif; letter-spacing: -0.02em;">
                 ${invite.venue}
               </div>
-              <div style="color: #8b7a6a; font-size: 12px;">
+              <div style="color: #8b7a6a; font-size: 13px; line-height: 1.6; font-family: 'Noto Sans KR', sans-serif; font-weight: 300; letter-spacing: -0.01em;">
                 ${loc.address}
               </div>
             </div>
@@ -257,12 +241,13 @@ export default function Location() {
         {/* Google Maps 지도 미리보기 */}
         {isMounted && loc.latitude && loc.longitude ? (
           <div
-            className="rounded-xl overflow-hidden border-2 border-[#d4c4b0] shadow-lg bg-white relative mb-6"
+            className="rounded-xl overflow-hidden border border-[#d4c4b0] shadow-md bg-white relative mb-6"
             style={{ height: "450px", width: "100%" }}
           >
             {!mapLoaded && (
-              <div className="absolute inset-0 flex items-center justify-center bg-[#f5f5f5] z-10">
+              <div className="absolute inset-0 flex items-center justify-center bg-[#faf9f6] z-10">
                 <div className="text-center">
+                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#8b7a6a] mb-3"></div>
                   <div className="text-[#8b7a6a] text-sm mb-2">
                     지도를 불러오는 중...
                   </div>
@@ -275,11 +260,11 @@ export default function Location() {
             <div
               ref={mapRef}
               style={{ height: "100%", width: "100%" }}
-              className="rounded-lg"
+              className="rounded-xl"
             />
           </div>
         ) : (
-          <div className="w-full h-[450px] flex items-center justify-center text-[#8b7a6a] rounded-xl border-2 border-[#e8e3d8] bg-[#f5f5f5] mb-6">
+          <div className="w-full h-[450px] flex items-center justify-center text-[#8b7a6a] rounded-xl border border-[#e8e3d8] bg-[#faf9f6] mb-6">
             좌표 정보가 없습니다.
           </div>
         )}
