@@ -170,7 +170,10 @@ export default function Guestbook() {
   return (
     <Section>
       <div className="text-center space-y-6">
-        <h2 className="text-2xl font-light text-[#5a4a3a] tracking-wide" style={{ fontFamily: 'serif' }}>
+        <h2
+          className="text-2xl font-light text-[#5a4a3a] tracking-wide"
+          style={{ fontFamily: "serif" }}
+        >
           축하 메시지
         </h2>
         <div className="w-16 h-px bg-[#d4c4b0] mx-auto"></div>
@@ -219,7 +222,10 @@ export default function Guestbook() {
             const isEditing = editingId === m.id;
 
             return (
-              <div key={m.id} className="rounded-xl border-2 border-[#e8e3d8] p-4 bg-white/50 shadow-sm">
+              <div
+                key={m.id}
+                className="rounded-xl border-2 border-[#e8e3d8] p-4 bg-white/50 shadow-sm"
+              >
                 <div className="flex items-center justify-between gap-3">
                   <p className="text-sm font-normal text-[#5a4a3a]">{m.name}</p>
 

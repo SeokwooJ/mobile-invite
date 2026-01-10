@@ -83,7 +83,7 @@ export default function CoverHero() {
             </div>
 
             {/* Two become one 텍스트 애니메이션 */}
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none w-full px-6">
+            <div className="absolute top-6 sm:top-8 left-1/2 transform -translate-x-1/2 pointer-events-none w-full px-6">
               <div className="text-center">
                 <span
                   className="

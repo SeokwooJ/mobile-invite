@@ -323,7 +323,11 @@ export default function Location() {
             <LinkButton href={loc.tmapUrl} label="티맵" icon="tmap" />
           )}
           {loc.naverMapUrl && (
-            <LinkButton href={loc.naverMapUrl} label="네이버지도" icon="naver" />
+            <LinkButton
+              href={loc.naverMapUrl}
+              label="네이버지도"
+              icon="naver"
+            />
           )}
           {loc.kakaoMapUrl && (
             <LinkButton href={loc.kakaoMapUrl} label="카카오맵" icon="kakao" />
@@ -335,35 +339,39 @@ export default function Location() {
         {loc.transportation && (
           <div className="mt-10 space-y-6">
             {/* 지하철 */}
-            {loc.transportation.subway && loc.transportation.subway.length > 0 && (
-              <div className="text-left space-y-2">
-                <div className="flex items-center gap-2 mb-3">
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    className="w-6 h-6 text-[#5a4a3a]"
-                  >
-                    <rect x="4" y="4" width="16" height="16" rx="2" />
-                    <path d="M4 12h16M8 4v16M16 4v16" />
-                  </svg>
-                  <h3 className="text-lg font-normal text-[#5a4a3a]" style={{ fontFamily: 'serif' }}>
-                    지하철
-                  </h3>
-                </div>
-                <ul className="space-y-2 pl-8">
-                  {loc.transportation.subway.map((item, idx) => (
-                    <li
-                      key={idx}
-                      className="text-sm text-[#6b5d4a] font-light leading-relaxed"
+            {loc.transportation.subway &&
+              loc.transportation.subway.length > 0 && (
+                <div className="text-left space-y-2">
+                  <div className="flex items-center gap-2 mb-3">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      className="w-6 h-6 text-[#5a4a3a]"
                     >
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+                      <rect x="4" y="4" width="16" height="16" rx="2" />
+                      <path d="M4 12h16M8 4v16M16 4v16" />
+                    </svg>
+                    <h3
+                      className="text-lg font-normal text-[#5a4a3a]"
+                      style={{ fontFamily: "serif" }}
+                    >
+                      지하철
+                    </h3>
+                  </div>
+                  <ul className="space-y-2 pl-8">
+                    {loc.transportation.subway.map((item, idx) => (
+                      <li
+                        key={idx}
+                        className="text-sm text-[#6b5d4a] font-light leading-relaxed"
+                      >
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
             {/* 버스 */}
             {loc.transportation.bus && loc.transportation.bus.length > 0 && (
@@ -378,7 +386,10 @@ export default function Location() {
                   >
                     <path d="M4 6h16M4 10h16M6 20a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM18 20a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM4 6l-1 4h18l-1-4M6 14h12" />
                   </svg>
-                  <h3 className="text-lg font-normal text-[#5a4a3a]" style={{ fontFamily: 'serif' }}>
+                  <h3
+                    className="text-lg font-normal text-[#5a4a3a]"
+                    style={{ fontFamily: "serif" }}
+                  >
                     버스
                   </h3>
                 </div>
@@ -408,7 +419,10 @@ export default function Location() {
                   >
                     <path d="M5 17h14v-3H5v3zM16 8h-8V5h8v3zM4 10h16M7 20a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM17 20a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" />
                   </svg>
-                  <h3 className="text-lg font-normal text-[#5a4a3a]" style={{ fontFamily: 'serif' }}>
+                  <h3
+                    className="text-lg font-normal text-[#5a4a3a]"
+                    style={{ fontFamily: "serif" }}
+                  >
                     자가용
                   </h3>
                 </div>
@@ -419,36 +433,40 @@ export default function Location() {
             )}
 
             {/* 도보 */}
-            {loc.transportation.walking && loc.transportation.walking.length > 0 && (
-              <div className="text-left space-y-2">
-                <div className="flex items-center gap-2 mb-3">
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    className="w-6 h-6 text-[#5a4a3a]"
-                  >
-                    <circle cx="12" cy="5" r="2" />
-                    <path d="M9 22v-7l-2-2v-5l5-2 5 2v5l-2 2v7" />
-                    <path d="M15 10l-3-1-3 1" />
-                  </svg>
-                  <h3 className="text-lg font-normal text-[#5a4a3a]" style={{ fontFamily: 'serif' }}>
-                    도보
-                  </h3>
-                </div>
-                <ul className="space-y-2 pl-8">
-                  {loc.transportation.walking.map((item, idx) => (
-                    <li
-                      key={idx}
-                      className="text-sm text-[#6b5d4a] font-light leading-relaxed"
+            {loc.transportation.walking &&
+              loc.transportation.walking.length > 0 && (
+                <div className="text-left space-y-2">
+                  <div className="flex items-center gap-2 mb-3">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      className="w-6 h-6 text-[#5a4a3a]"
                     >
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+                      <circle cx="12" cy="5" r="2" />
+                      <path d="M9 22v-7l-2-2v-5l5-2 5 2v5l-2 2v7" />
+                      <path d="M15 10l-3-1-3 1" />
+                    </svg>
+                    <h3
+                      className="text-lg font-normal text-[#5a4a3a]"
+                      style={{ fontFamily: "serif" }}
+                    >
+                      도보
+                    </h3>
+                  </div>
+                  <ul className="space-y-2 pl-8">
+                    {loc.transportation.walking.map((item, idx) => (
+                      <li
+                        key={idx}
+                        className="text-sm text-[#6b5d4a] font-light leading-relaxed"
+                      >
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
           </div>
         )}
 

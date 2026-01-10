@@ -22,7 +22,20 @@ export default function Info() {
     return () => clearInterval(interval);
   }, []);
 
-  const monthNames = ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"];
+  const monthNames = [
+    "1월",
+    "2월",
+    "3월",
+    "4월",
+    "5월",
+    "6월",
+    "7월",
+    "8월",
+    "9월",
+    "10월",
+    "11월",
+    "12월",
+  ];
   const dayNames = ["일", "월", "화", "수", "목", "금", "토"];
   const year = 2026;
   const month = 2; // 3월 (0-based)
@@ -45,11 +58,14 @@ export default function Info() {
   return (
     <Section>
       <div className="text-center space-y-6">
-        <h2 className="text-2xl font-light text-[#5a4a3a] tracking-wide" style={{ fontFamily: 'serif' }}>
+        <h2
+          className="text-2xl font-light text-[#5a4a3a] tracking-wide"
+          style={{ fontFamily: "serif" }}
+        >
           예식 안내
         </h2>
         <div className="w-16 h-px bg-[#d4c4b0] mx-auto"></div>
-        
+
         <div className="text-base text-center text-[#6b5d4a] space-y-3 font-light">
           <p className="text-lg">{invite.date}</p>
           <p className="text-lg">{invite.time}</p>
@@ -85,11 +101,12 @@ export default function Info() {
                     key={idx}
                     className={`
                       aspect-square flex items-center justify-center text-xs
-                      ${date === day
-                        ? "bg-[#5a4a3a] text-white rounded-full font-medium"
-                        : date
-                        ? "text-[#6b5d4a] font-light"
-                        : ""
+                      ${
+                        date === day
+                          ? "bg-[#5a4a3a] text-white rounded-full font-medium"
+                          : date
+                          ? "text-[#6b5d4a] font-light"
+                          : ""
                       }
                     `}
                   >
