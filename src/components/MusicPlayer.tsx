@@ -21,16 +21,39 @@ export default function MusicPlayer() {
         !url.startsWith("//") &&
         !url.startsWith("http")
       ) {
+        // 현재 URL에서 basePath 추출
+        const hostname = window.location.hostname;
         const pathname = window.location.pathname;
-        const pathParts = pathname.split("/").filter(Boolean);
-
-        // GitHub Pages에서 basePath가 있는 경우 (예: /mobile-invite/)
-        if (pathParts.length > 0 && pathParts[0] === "mobile-invite") {
-          url = `/mobile-invite${url}`;
-        }
-        // 루트 경로에서도 basePath가 있을 수 있으므로 확인
-        else if (pathname.startsWith("/mobile-invite")) {
-          url = `/mobile-invite${url}`;
+        
+        // basePath 자동 감지 로직
+        const isLocalhost = hostname === "localhost" || hostname === "127.0.0.1" || hostname === "0.0.0.0";
+        const isGitHubPages = hostname.includes("github.io");
+        
+        // 로컬 개발 환경이 아닌 경우 basePath 추가
+        if (!isLocalhost) {
+          const pathParts = pathname.split("/").filter(Boolean);
+          // GitHub Pages: repo 이름이 pathname의 첫 번째 요소
+          if (isGitHubPages) {
+            // pathname이 "/mobile-invite"로 시작하거나, 첫 번째 경로가 "mobile-invite"
+            if (pathname.startsWith("/mobile-invite") || (pathParts.length > 0 && pathParts[0] === "mobile-invite")) {
+              url = `/mobile-invite${url}`;
+            } else {
+              // 루트 경로인 경우에도 basePath 추가
+              url = `/mobile-invite${url}`;
+            }
+          }
+          // 기타 프로덕션 환경
+          else {
+            const pathParts = pathname.split("/").filter(Boolean);
+            if (pathParts.length > 0 && pathParts[0] === "mobile-invite") {
+              url = `/mobile-invite${url}`;
+            } else if (pathname.startsWith("/mobile-invite")) {
+              url = `/mobile-invite${url}`;
+            } else {
+              // basePath가 없는 경우도 추가 (프로덕션 환경에서는 보통 basePath가 있음)
+              url = `/mobile-invite${url}`;
+            }
+          }
         }
       }
 
@@ -39,8 +62,12 @@ export default function MusicPlayer() {
       setMusicUrl(url);
 
       // 디버깅용 콘솔 로그
-      console.log("Music URL:", url);
+      console.log("=== Music Player Debug ===");
+      console.log("Original URL:", invite.music.url);
+      console.log("Final Music URL:", url);
       console.log("Current pathname:", window.location.pathname);
+      console.log("Current hostname:", window.location.hostname);
+      console.log("Full URL:", window.location.href);
     } else if (invite.music?.url) {
       // 서버 사이드 렌더링 시 (개발 환경)
       setMusicUrl(invite.music.url.replace(/ /g, "%20"));
