@@ -90,7 +90,7 @@ export default function Account() {
                                 {acc.holder}
                               </p>
                               <p className="text-sm font-normal break-all mt-1 text-[#5a4a3a]">
-                                {acc.number} {acc.bank}
+                                {acc.bank} {acc.number}
                               </p>
                             </>
                           ) : (
