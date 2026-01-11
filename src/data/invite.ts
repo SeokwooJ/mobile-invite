@@ -1,6 +1,8 @@
 export type Invite = {
   groom: string;
   bride: string;
+  groomKorean?: string;
+  brideKorean?: string;
 
   cover: {
     image: string;
@@ -56,6 +58,8 @@ export type Invite = {
 export const invite: Invite = {
   groom: "Seokwoo",
   bride: "Jooyoung",
+  groomKorean: "장석우",
+  brideKorean: "박주영",
   cover: {
     image: "images/cover.jpg",
   },
