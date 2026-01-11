@@ -109,8 +109,8 @@ export const invite: Invite = {
       group: "신부측",
       items: [
         { bank: "카카오뱅크", number: "3333105871789", holder: "[신부] 박주영" },
-        { bank: "", number: "", holder: "[아버지] 박덕영" },
-        { bank: "", number: "", holder: "[어머니] 김정임" },
+        { bank: "한국산업은행", number: "020 0404 2636 312", holder: "[아버지] 박덕영" },
+        { bank: "농협", number: "241020~52~091125", holder: "[어머니] 김정임" },
       ],
     },
   ],
