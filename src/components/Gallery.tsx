@@ -5,7 +5,38 @@ import Section from "./Section";
 import { invite } from "@/data/invite";
 
 export default function Gallery() {
-  const images = invite.gallery;
+  const [images, setImages] = useState<string[]>([]);
+
+  useEffect(() => {
+    // basePath 자동 감지 (GitHub Pages용)
+    if (typeof window === "undefined") {
+      setImages(invite.gallery);
+      return;
+    }
+
+    const hostname = window.location.hostname;
+    const isLocalhost =
+      hostname === "localhost" ||
+      hostname === "127.0.0.1" ||
+      hostname === "0.0.0.0";
+
+    const processedImages = invite.gallery.map((src) => {
+      // 절대 경로가 아니면 basePath 추가
+      if (
+        src.startsWith("/") &&
+        !src.startsWith("//") &&
+        !src.startsWith("http")
+      ) {
+        // 로컬 개발 환경이 아닌 경우 basePath 추가
+        if (!isLocalhost) {
+          return `/mobile-invite${src}`;
+        }
+      }
+      return src;
+    });
+
+    setImages(processedImages);
+  }, []);
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState(0);
   const [touchStartX, setTouchStartX] = useState<number | null>(null);

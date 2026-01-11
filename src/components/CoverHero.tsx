@@ -5,21 +5,62 @@ import FallingFlowers from "./FallingFlowers";
 import { useEffect, useState } from "react";
 
 export default function CoverHero() {
-  const coverImage =
+  const rawCoverImage =
     invite.cover?.image ?? invite.gallery?.[0] ?? "images/cover.jpg";
+  const [coverImage, setCoverImage] = useState(rawCoverImage);
   const [viewportHeight, setViewportHeight] = useState("100svh");
+
+  // basePath 자동 감지 및 이미지 경로 처리
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      setCoverImage(rawCoverImage);
+      return;
+    }
+
+    const hostname = window.location.hostname;
+    const isLocalhost =
+      hostname === "localhost" ||
+      hostname === "127.0.0.1" ||
+      hostname === "0.0.0.0";
+
+    let processedImage = rawCoverImage;
+    // 절대 경로가 아니면 basePath 추가
+    if (
+      processedImage.startsWith("/") &&
+      !processedImage.startsWith("//") &&
+      !processedImage.startsWith("http")
+    ) {
+      // 로컬 개발 환경이 아닌 경우 basePath 추가
+      if (!isLocalhost) {
+        processedImage = `/mobile-invite${processedImage}`;
+      }
+    } else if (!processedImage.startsWith("/") && !processedImage.startsWith("http")) {
+      // 상대 경로인 경우
+      if (!isLocalhost) {
+        processedImage = `/mobile-invite/${processedImage}`;
+      } else {
+        processedImage = `/${processedImage}`;
+      }
+    }
+
+    setCoverImage(processedImage);
+  }, [rawCoverImage]);
 
   // Cover 이미지 preload
   useEffect(() => {
+    if (!coverImage) return;
+    
     const link = document.createElement("link");
     link.rel = "preload";
     link.as = "image";
-    link.href = coverImage.startsWith("/") ? coverImage : `/${coverImage}`;
+    link.href = coverImage;
     link.setAttribute("fetchpriority", "high");
     document.head.appendChild(link);
 
     return () => {
-      document.head.removeChild(link);
+      if (document.head.contains(link)) {
+        document.head.removeChild(link);
+      }
     };
   }, [coverImage]);
 
