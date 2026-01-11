@@ -155,7 +155,7 @@ export default function CoverHero() {
                   font-medium
                 "
               >
-                {invite.groomKorean || invite.groom}
+                {invite.groom}
               </span>
 
               <span
@@ -168,7 +168,7 @@ export default function CoverHero() {
                   font-medium
                 "
               >
-                {invite.brideKorean || invite.bride}
+                {invite.bride}
               </span>
             </div>
 
