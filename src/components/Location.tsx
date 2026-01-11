@@ -85,6 +85,7 @@ export default function Location() {
   const loc = invite.location;
   const [isMounted, setIsMounted] = useState(false);
   const [mapLoaded, setMapLoaded] = useState(false);
+  const [mapError, setMapError] = useState<string | null>(null);
   const mapRef = useRef<HTMLDivElement>(null);
   const googleMapRef = useRef<any>(null);
 
@@ -112,6 +113,7 @@ export default function Location() {
     if (!apiKey) {
       console.error("Google Maps API 키가 설정되지 않았습니다.");
       setMapLoaded(false);
+      setMapError("API 키가 설정되지 않았습니다.");
       return;
     }
 
@@ -141,6 +143,7 @@ export default function Location() {
           if (!googleMapRef.current) {
             console.warn("Google Maps API 로드 타임아웃");
             setMapLoaded(false);
+            setMapError("지도를 불러오는데 시간이 오래 걸립니다. 아래 버튼을 이용해주세요.");
           }
         }, 10000);
 
@@ -167,12 +170,14 @@ export default function Location() {
         } else {
           console.error("Google Maps API를 로드할 수 없습니다.");
           setMapLoaded(false);
+          setMapError("지도를 불러올 수 없습니다. 아래 버튼을 이용해주세요.");
         }
       };
       script.onerror = (error) => {
         console.error("Google Maps API 스크립트 로드 실패:", error);
         console.error("API URL:", scriptUrl.replace(apiKey, "API_KEY_HIDDEN"));
         setMapLoaded(false);
+        setMapError("지도를 불러올 수 없습니다. 아래 버튼을 이용해주세요.");
       };
       document.head.appendChild(script);
     };
@@ -249,20 +254,23 @@ export default function Location() {
 
         console.log("Google Maps 지도 생성 성공");
         setMapLoaded(true);
+        setMapError(null);
       } catch (error) {
         console.error("Google Maps 생성 실패:", error);
         console.error("Error details:", JSON.stringify(error, null, 2));
         setMapLoaded(false);
+        setMapError("지도를 불러올 수 없습니다. 아래 버튼을 이용해주세요.");
       }
     };
 
     // 약간의 지연 후 지도 컨테이너가 준비될 때까지 대기
-    const waitForContainer = setTimeout(() => {
-      if (!mapRef.current) {
-        console.error("지도 컨테이너를 찾을 수 없습니다.");
-        setMapLoaded(false);
-        return;
-      }
+    const waitForContainer =         setTimeout(() => {
+          if (!mapRef.current) {
+            console.error("지도 컨테이너를 찾을 수 없습니다.");
+            setMapLoaded(false);
+            setMapError("지도 컨테이너를 찾을 수 없습니다.");
+            return;
+          }
 
       console.log("Map Ref 준비됨");
       // 지도 로드 시작
@@ -300,15 +308,28 @@ export default function Location() {
             style={{ height: "450px", width: "100%" }}
           >
             {!mapLoaded && (
-              <div className="absolute inset-0 flex items-center justify-center bg-[#faf9f6] z-10">
-                <div className="text-center">
-                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#8b7a6a] mb-3"></div>
-                  <div className="text-[#8b7a6a] text-sm mb-2">
-                    지도를 불러오는 중...
-                  </div>
-                  <div className="text-xs text-[#8b7a6a] mt-2">
-                    잠시만 기다려주세요
-                  </div>
+              <div className="absolute inset-0 flex items-center justify-center bg-[#faf9f6] z-10 rounded-xl">
+                <div className="text-center px-4">
+                  {!mapError ? (
+                    <>
+                      <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#8b7a6a] mb-3"></div>
+                      <div className="text-[#8b7a6a] text-sm mb-2">
+                        지도를 불러오는 중...
+                      </div>
+                      <div className="text-xs text-[#8b7a6a] mt-2">
+                        잠시만 기다려주세요
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="text-[#8b7a6a] text-sm mb-2">
+                        {mapError}
+                      </div>
+                      <div className="text-xs text-[#8b7a6a] mt-2">
+                        아래 버튼을 눌러 지도를 확인하세요
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             )}
