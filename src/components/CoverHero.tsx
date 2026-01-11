@@ -172,7 +172,7 @@ export default function CoverHero() {
               </span>
             </div>
 
-            {/* Two become one 텍스트 애니메이션 */}
+            {/* We're getting married! 텍스트 애니메이션 */}
             <div className="absolute top-4 sm:top-8 left-1/2 transform -translate-x-1/2 pointer-events-none w-full px-4 sm:px-6">
               <div className="text-center">
                 <span
@@ -182,13 +182,14 @@ export default function CoverHero() {
                     sm:text-[40px]
                     text-white
                     drop-shadow-[0_2px_12px_rgba(0,0,0,0.6)]
-                    font-medium
+                    font-bold
                     inline-block
                     opacity-0
                     animate-[writeReveal_2s_ease-out_1s_forwards]
                   "
+                  style={{ fontWeight: 700 }}
                 >
-                  Two become one
+                  We're getting married!
                 </span>
               </div>
             </div>
