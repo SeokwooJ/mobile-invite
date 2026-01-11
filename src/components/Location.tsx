@@ -106,7 +106,9 @@ export default function Location() {
 
     console.log("=== Google Maps Debug ===");
     console.log("API Key (exists):", !!apiKey);
+    console.log("API Key (value):", apiKey);
     console.log("API Key (first 10):", apiKey?.substring(0, 10) + "...");
+    console.log("All NEXT_PUBLIC_ env vars:", Object.keys(process.env).filter(key => key.startsWith('NEXT_PUBLIC_')));
     console.log("Latitude:", loc.latitude);
     console.log("Longitude:", loc.longitude);
 
@@ -363,6 +365,12 @@ export default function Location() {
         {/* 교통편 정보 */}
         {loc.transportation && (
           <div className="mt-10 space-y-6">
+            <h3
+              className="text-xl font-normal text-[#5a4a3a] text-center mb-6"
+              style={{ fontFamily: "serif" }}
+            >
+              교통안내
+            </h3>
             {/* 지하철 */}
             {loc.transportation.subway &&
               loc.transportation.subway.length > 0 && (
@@ -431,6 +439,40 @@ export default function Location() {
               </div>
             )}
 
+            {/* 셔틀버스 */}
+            {loc.transportation.shuttle &&
+              loc.transportation.shuttle.length > 0 && (
+                <div className="text-left space-y-2">
+                  <div className="flex items-center gap-2 mb-3">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      className="w-6 h-6 text-[#5a4a3a]"
+                    >
+                      <path d="M4 6h16M4 10h16M6 20a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM18 20a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM4 6l-1 4h18l-1-4M6 14h12" />
+                    </svg>
+                    <h3
+                      className="text-lg font-normal text-[#5a4a3a]"
+                      style={{ fontFamily: "serif" }}
+                    >
+                      셔틀버스
+                    </h3>
+                  </div>
+                  <ul className="space-y-2 pl-8">
+                    {loc.transportation.shuttle.map((item, idx) => (
+                      <li
+                        key={idx}
+                        className="text-sm text-[#6b5d4a] font-light leading-relaxed"
+                      >
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
             {/* 자가용 */}
             {loc.transportation.car && (
               <div className="text-left space-y-2">
@@ -451,47 +493,11 @@ export default function Location() {
                     자가용
                   </h3>
                 </div>
-                <p className="text-sm text-[#6b5d4a] font-light leading-relaxed pl-8">
+                <div className="text-sm text-[#6b5d4a] font-light leading-relaxed pl-8 whitespace-pre-line">
                   {loc.transportation.car}
-                </p>
+                </div>
               </div>
             )}
-
-            {/* 도보 */}
-            {loc.transportation.walking &&
-              loc.transportation.walking.length > 0 && (
-                <div className="text-left space-y-2">
-                  <div className="flex items-center gap-2 mb-3">
-                    <svg
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      className="w-6 h-6 text-[#5a4a3a]"
-                    >
-                      <circle cx="12" cy="5" r="2" />
-                      <path d="M9 22v-7l-2-2v-5l5-2 5 2v5l-2 2v7" />
-                      <path d="M15 10l-3-1-3 1" />
-                    </svg>
-                    <h3
-                      className="text-lg font-normal text-[#5a4a3a]"
-                      style={{ fontFamily: "serif" }}
-                    >
-                      도보
-                    </h3>
-                  </div>
-                  <ul className="space-y-2 pl-8">
-                    {loc.transportation.walking.map((item, idx) => (
-                      <li
-                        key={idx}
-                        className="text-sm text-[#6b5d4a] font-light leading-relaxed"
-                      >
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
           </div>
         )}
 
