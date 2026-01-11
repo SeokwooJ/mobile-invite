@@ -226,7 +226,7 @@ export default function CoverHero() {
                     font-bold
                     inline-block
                     opacity-0
-                    animate-[writeReveal_2s_ease-out_1s_forwards]
+                    animate-[writeReveal_4s_ease-out_1.5s_forwards]
                   "
                   style={{ fontWeight: 700 }}
                 >
