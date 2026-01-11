@@ -93,8 +93,8 @@ export const invite: Invite = {
   },
 
   contacts: {
-    groom: { name: "Seokwoo", tel: "010-2005-8527" },
-    bride: { name: "Jooyoung", tel: "010-8332-3341" },
+    groom: { name: "장석우", tel: "010-2005-8527" },
+    bride: { name: "박주영", tel: "010-8332-3341" },
   },
 
   accounts: [
