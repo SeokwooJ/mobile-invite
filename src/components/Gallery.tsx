@@ -85,6 +85,7 @@ export default function Gallery() {
               <img
                 src={src}
                 alt={`gallery-${i}`}
+                loading="lazy"
                 className="w-full h-full object-cover"
               />
             </button>
@@ -131,6 +132,7 @@ export default function Gallery() {
             src={images[index]}
             alt={`viewer-${index}`}
             className="max-w-full max-h-full object-contain"
+            loading="eager"
             onTouchStart={onTouchStart}
             onTouchMove={onTouchMove}
             onTouchEnd={onTouchEnd}

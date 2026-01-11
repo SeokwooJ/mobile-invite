@@ -9,6 +9,20 @@ export default function CoverHero() {
     invite.cover?.image ?? invite.gallery?.[0] ?? "images/cover.jpg";
   const [viewportHeight, setViewportHeight] = useState("100svh");
 
+  // Cover 이미지 preload
+  useEffect(() => {
+    const link = document.createElement("link");
+    link.rel = "preload";
+    link.as = "image";
+    link.href = coverImage.startsWith("/") ? coverImage : `/${coverImage}`;
+    link.setAttribute("fetchpriority", "high");
+    document.head.appendChild(link);
+
+    return () => {
+      document.head.removeChild(link);
+    };
+  }, [coverImage]);
+
   useEffect(() => {
     // 모바일에서 스크롤 시 크기 변경 방지를 위해 초기 높이 고정
     if (typeof window === "undefined") return;
@@ -112,6 +126,7 @@ export default function CoverHero() {
             <img
               src={coverImage}
               alt="cover"
+              fetchPriority="high"
               className="
                 w-full
                 h-full
