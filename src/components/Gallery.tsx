@@ -36,6 +36,16 @@ export default function Gallery() {
     });
 
     setImages(processedImages);
+
+    // 첫 6개 이미지 preload (갤러리 섹션이 보이기 전에 미리 로드)
+    const preloadImages = processedImages.slice(0, 6);
+    preloadImages.forEach((src) => {
+      const link = document.createElement("link");
+      link.rel = "preload";
+      link.as = "image";
+      link.href = src;
+      document.head.appendChild(link);
+    });
   }, []);
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState(0);
@@ -131,7 +141,8 @@ export default function Gallery() {
               <img
                 src={src}
                 alt={`gallery-${i}`}
-                loading="lazy"
+                loading={i < 6 ? "eager" : "lazy"}
+                fetchPriority={i < 3 ? "high" : "auto"}
                 className="w-full h-full object-cover"
                 decoding="async"
               />

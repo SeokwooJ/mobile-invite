@@ -1,10 +1,48 @@
+"use client";
+
 import { invite } from "@/data/invite";
+import { useEffect, useRef, useState } from "react";
 
 export default function Cover() {
+  const [isVisible, setIsVisible] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setIsVisible(true);
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        threshold: 0.1,
+        rootMargin: "0px 0px -50px 0px",
+      }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => {
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current);
+      }
+    };
+  }, []);
+
   return (
     <section
+      ref={sectionRef}
       id="cover-section"
-      className="min-h-[60vh] flex flex-col justify-center items-center text-center px-6 bg-[#faf9f6] border-y border-[#e8e3d8]/50"
+      className={`min-h-[60vh] flex flex-col justify-center items-center text-center px-6 bg-[#faf9f6] border-y border-[#e8e3d8]/50 transition-all duration-700 ease-out ${
+        isVisible
+          ? "opacity-100 translate-y-0"
+          : "opacity-0 translate-y-8"
+      }`}
     >
       <div className="space-y-4">
         <p className="text-xs tracking-widest mb-4 text-[#8b7a6a] uppercase">

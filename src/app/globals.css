@@ -157,3 +157,14 @@ body {
 .gm-style-iw-d {
   overflow: hidden !important;
 }
+
+/* 접근성: 애니메이션 감소 선호 사용자 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
