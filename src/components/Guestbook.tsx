@@ -171,7 +171,7 @@ export default function Guestbook() {
     <Section>
       <div className="text-center space-y-6">
         <h2
-          className="text-2xl font-light text-[#5a4a3a] tracking-wide"
+          className="text-2xl font-bold text-[#5a4a3a] tracking-wide"
           style={{ fontFamily: "serif" }}
         >
           축하 메시지

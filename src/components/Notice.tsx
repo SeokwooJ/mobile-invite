@@ -14,7 +14,7 @@ export default function Notice() {
     <Section>
       <div className="text-center space-y-6">
         <h2
-          className="text-2xl font-light text-[#5a4a3a] tracking-wide"
+          className="text-2xl font-bold text-[#5a4a3a] tracking-wide"
           style={{ fontFamily: "serif" }}
         >
           안내사항

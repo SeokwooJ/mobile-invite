@@ -99,7 +99,7 @@ export default function Gallery() {
   return (
     <Section>
       <div className="text-center space-y-6">
-        <h2 className="text-2xl font-light text-[#5a4a3a] tracking-wide" style={{ fontFamily: 'serif' }}>
+        <h2 className="text-2xl font-bold text-[#5a4a3a] tracking-wide" style={{ fontFamily: 'serif' }}>
           갤러리
         </h2>
         <div className="w-16 h-px bg-[#d4c4b0] mx-auto"></div>

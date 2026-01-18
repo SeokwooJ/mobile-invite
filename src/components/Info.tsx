@@ -66,7 +66,7 @@ export default function Info() {
           </p>
         </div>
         <h2
-          className="text-2xl font-light text-[#5a4a3a] tracking-wide"
+          className="text-2xl font-bold text-[#5a4a3a] tracking-wide"
           style={{ fontFamily: "serif" }}
         >
           예식 안내

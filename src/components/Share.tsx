@@ -40,24 +40,32 @@ export default function Share() {
 
   async function shareNative() {
     try {
-      if (navigator.share) {
+      // 모바일에서 Web Share API 사용
+      if (navigator.share && typeof navigator.share === 'function') {
         await navigator.share({
           title: site.title,
-          text: site.description,
-          url,
+          text: site.description || site.title,
+          url: url,
         });
       } else {
+        // Web Share API가 지원되지 않으면 링크 복사로 fallback
         await copyLink();
       }
-    } catch {
-      // 사용자가 취소해도 에러로 떨어질 수 있어 무시
+    } catch (error: any) {
+      // 사용자가 취소한 경우 (AbortError)는 무시
+      if (error?.name === 'AbortError') {
+        return;
+      }
+      // 다른 에러는 링크 복사로 fallback
+      console.warn('Native share failed, falling back to copy:', error);
+      await copyLink();
     }
   }
 
   return (
     <Section>
       <div className="text-center space-y-6">
-        <h2 className="text-2xl font-light text-[#5a4a3a] tracking-wide" style={{ fontFamily: 'serif' }}>
+        <h2 className="text-2xl font-bold text-[#5a4a3a] tracking-wide" style={{ fontFamily: 'serif' }}>
           공유하기
         </h2>
         <div className="w-16 h-px bg-[#d4c4b0] mx-auto"></div>

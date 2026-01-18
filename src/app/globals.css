@@ -35,8 +35,8 @@ h6,
 [style*='fontFamily: "serif"'] {
   font-family: "Pretendard", var(--font-noto-serif-kr), "Apple SD Gothic Neo",
     -apple-system, BlinkMacSystemFont, Georgia, "Times New Roman", serif !important;
-  font-weight: 300;
-  letter-spacing: 0.05em;
+  font-weight: 500;
+  letter-spacing: 0.02em;
   font-feature-settings: "kern" 1, "liga" 1;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -50,10 +50,12 @@ a,
 button,
 input,
 textarea {
-  font-family: var(--font-noto-sans-kr), -apple-system, BlinkMacSystemFont,
+  font-family: "Pretendard", var(--font-noto-sans-kr), -apple-system, BlinkMacSystemFont,
     "Segoe UI", "Apple SD Gothic Neo", sans-serif;
-  font-weight: 300;
-  letter-spacing: -0.01em;
+  font-weight: 400;
+  letter-spacing: -0.005em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 :root {
