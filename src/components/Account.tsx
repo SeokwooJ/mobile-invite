@@ -4,42 +4,56 @@ import { useState } from "react";
 import Section from "./Section";
 import { invite } from "@/data/invite";
 
-function CopyButton({ text }: { text: string }) {
+// 계좌번호를 깔끔하게 포맷팅 (공백, 하이픈 제거)
+function formatAccountNumber(number: string): string {
+  return number.replace(/[\s-~]/g, "");
+}
+
+// 복사용 계좌번호 (공백, 하이픈 제거)
+function getCopyText(bank: string, number: string): string {
+  const cleanNumber = formatAccountNumber(number);
+  return `${bank} ${cleanNumber}`;
+}
+
+function CopyButton({ bank, number }: { bank: string; number: string }) {
   const [copied, setCopied] = useState(false);
 
   async function onCopy() {
+    const copyText = getCopyText(bank, number);
     try {
-      await navigator.clipboard.writeText(text);
+      await navigator.clipboard.writeText(copyText);
       setCopied(true);
-      setTimeout(() => setCopied(false), 1200);
+      setTimeout(() => setCopied(false), 2000);
     } catch {
       // clipboard가 막힌 환경(일부 브라우저/보안 설정) 대비: fallback
       const textarea = document.createElement("textarea");
-      textarea.value = text;
+      textarea.value = copyText;
       document.body.appendChild(textarea);
       textarea.select();
       document.execCommand("copy");
       document.body.removeChild(textarea);
 
       setCopied(true);
-      setTimeout(() => setCopied(false), 1200);
+      setTimeout(() => setCopied(false), 2000);
     }
   }
 
   return (
     <button
       onClick={onCopy}
-      className="rounded-lg border-2 border-[#d4c4b0] px-3 py-2 text-xs text-[#6b5d4a] hover:bg-[#f0ede5] transition-colors font-light"
+      className={`rounded-lg px-4 py-2 text-xs font-medium transition-all duration-200 ${
+        copied
+          ? "bg-[#5a4a3a] text-white"
+          : "bg-white border-2 border-[#d4c4b0] text-[#6b5d4a] hover:bg-[#f0ede5] hover:border-[#c4b4a0]"
+      }`}
       type="button"
     >
-      {copied ? "복사됨!" : "복사"}
+      {copied ? "✓ 복사됨" : "복사"}
     </button>
   );
 }
 
 export default function Account() {
-  const [openGroup, setOpenGroup] = useState<string | null>(null);
-
   return (
     <Section>
       <div className="text-center space-y-6">
@@ -56,58 +70,50 @@ export default function Account() {
           마음을 전해주시는 모든 분들께 진심으로 감사드립니다.
         </p>
 
-        <div className="space-y-3">
-          {invite.accounts.map((group) => {
-            const isOpen = openGroup === group.group;
-
-            return (
-              <div
-                key={group.group}
-                className="rounded-xl border-2 border-[#e8e3d8] overflow-hidden bg-white/50 shadow-sm"
-              >
-                <button
-                  type="button"
-                  onClick={() => setOpenGroup(isOpen ? null : group.group)}
-                  className="w-full px-5 py-4 flex items-center justify-between text-sm text-[#5a4a3a] hover:bg-[#f0ede5] transition-colors"
-                >
-                  <span className="font-normal">{group.group}</span>
-                  <span className="text-[#8b7a6a]">
-                    {isOpen ? "닫기" : "열기"}
-                  </span>
-                </button>
-
-                {isOpen && (
-                  <div className="border-t-2 border-[#e8e3d8] px-5 py-4 space-y-3 bg-white/30">
-                    {group.items.map((acc, idx) => (
-                      <div
-                        key={`${acc.number}-${idx}-${acc.holder}`}
-                        className="rounded-xl bg-[#faf9f6] border border-[#e8e3d8] p-4 flex items-center justify-between gap-3"
-                      >
-                        <div className="min-w-0 flex-1">
-                          {acc.bank && acc.number ? (
-                            <>
-                              <p className="text-xs text-[#8b7a6a]">
-                                {acc.holder}
-                              </p>
-                              <p className="text-sm font-normal break-all mt-1 text-[#5a4a3a]">
-                                {acc.bank} {acc.number}
-                              </p>
-                            </>
-                          ) : (
-                            <p className="text-sm text-[#8b7a6a] font-light">
-                              {acc.holder} (계좌번호 추후 업데이트)
-                            </p>
-                          )}
+        <div className="space-y-6">
+          {invite.accounts.map((group) => (
+            <div key={group.group} className="space-y-4">
+              <h3 className="text-lg font-medium text-[#5a4a3a] text-left">
+                {group.group} 계좌번호
+              </h3>
+              <div className="space-y-4">
+                {group.items.map((acc, idx) => (
+                  <div
+                    key={`${acc.number}-${idx}-${acc.holder}`}
+                    className="rounded-xl bg-white border border-[#e8e3d8] p-5 shadow-sm"
+                  >
+                    {acc.bank && acc.number ? (
+                      <>
+                        <div className="mb-3">
+                          <p className="text-sm text-[#8b7a6a] mb-1">
+                            {acc.holder}
+                          </p>
+                          <p className="text-base font-medium text-[#5a4a3a] mb-1">
+                            {acc.bank}
+                          </p>
+                          <p className="text-lg font-semibold text-[#5a4a3a] tracking-wide">
+                            {acc.number}
+                          </p>
                         </div>
-
-                        {acc.bank && acc.number && <CopyButton text={acc.number} />}
+                        <div className="flex justify-end">
+                          <CopyButton bank={acc.bank} number={acc.number} />
+                        </div>
+                      </>
+                    ) : (
+                      <div className="py-2">
+                        <p className="text-sm text-[#8b7a6a] font-light">
+                          {acc.holder}
+                        </p>
+                        <p className="text-xs text-[#8b7a6a] font-light mt-1">
+                          (계좌번호 추후 업데이트)
+                        </p>
                       </div>
-                    ))}
+                    )}
                   </div>
-                )}
+                ))}
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
       </div>
     </Section>
