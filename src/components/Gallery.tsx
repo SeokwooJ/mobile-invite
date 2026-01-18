@@ -39,10 +39,14 @@ export default function Gallery() {
   }, []);
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState(0);
+  const [prevIndex, setPrevIndex] = useState(0);
+  const [direction, setDirection] = useState<"left" | "right">("right");
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
   const [touchEndX, setTouchEndX] = useState<number | null>(null);
 
   const SWIPE_THRESHOLD = 50; // px
+  const TRANSITION_DURATION = 400; // ms
 
   function onTouchStart(e: React.TouchEvent) {
     setTouchEndX(null);
@@ -55,6 +59,7 @@ export default function Gallery() {
 
   function onTouchEnd() {
     if (touchStartX === null || touchEndX === null) return;
+    if (isTransitioning) return; // 전환 중이면 무시
 
     const delta = touchStartX - touchEndX;
 
@@ -77,11 +82,21 @@ export default function Gallery() {
   }
 
   function prev() {
+    if (isTransitioning) return;
+    setIsTransitioning(true);
+    setDirection("left");
+    setPrevIndex(index);
     setIndex((i) => (i === 0 ? images.length - 1 : i - 1));
+    setTimeout(() => setIsTransitioning(false), TRANSITION_DURATION);
   }
 
   function next() {
+    if (isTransitioning) return;
+    setIsTransitioning(true);
+    setDirection("right");
+    setPrevIndex(index);
     setIndex((i) => (i === images.length - 1 ? 0 : i + 1));
+    setTimeout(() => setIsTransitioning(false), TRANSITION_DURATION);
   }
 
   // 배경 스크롤 잠금
@@ -118,6 +133,7 @@ export default function Gallery() {
                 alt={`gallery-${i}`}
                 loading="lazy"
                 className="w-full h-full object-cover"
+                decoding="async"
               />
             </button>
           ))}
@@ -154,20 +170,42 @@ export default function Gallery() {
             ›
           </button>
 
-          <p className="absolute bottom-5 text-white text-xs opacity-70">
+          <p className="absolute bottom-5 text-white text-xs opacity-70 whitespace-nowrap px-4">
             좌우로 스와이프하여 넘길 수 있어요
           </p>
 
           {/* 이미지 */}
-          <img
-            src={images[index]}
-            alt={`viewer-${index}`}
-            className="max-w-full max-h-full object-contain"
-            loading="eager"
+          <div
+            className="relative max-w-full max-h-full flex items-center justify-center overflow-hidden"
             onTouchStart={onTouchStart}
             onTouchMove={onTouchMove}
             onTouchEnd={onTouchEnd}
-          />
+          >
+            {/* 이전 이미지 (페이드 아웃) */}
+            {isTransitioning && prevIndex !== index && (
+              <img
+                key={`prev-${prevIndex}`}
+                src={images[prevIndex]}
+                alt={`viewer-prev-${prevIndex}`}
+                className="absolute max-w-full max-h-full object-contain"
+                style={{
+                  animation: `fadeOut${direction === "right" ? "Left" : "Right"} ${TRANSITION_DURATION}ms ease-in-out`,
+                }}
+              />
+            )}
+            {/* 새 이미지 (페이드 인 + 슬라이드) */}
+            <img
+              key={`current-${index}`}
+              src={images[index]}
+              alt={`viewer-${index}`}
+              className="max-w-full max-h-full object-contain"
+              loading="eager"
+              decoding="async"
+              style={{
+                animation: `fadeInSlide${direction === "right" ? "Right" : "Left"} ${TRANSITION_DURATION}ms ease-in-out`,
+              }}
+            />
+          </div>
         </div>
       )}
     </Section>
