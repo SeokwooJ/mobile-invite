@@ -102,7 +102,7 @@ export const invite: Invite = {
       group: "신랑측",
       items: [
         { bank: "하나은행", number: "177-910539-09607", holder: "[신랑] 장석우" },
-        { bank: "", number: "", holder: "[아버지] 장광용" },
+        { bank: "국민은행", number: "843 21 0470 602", holder: "[아버지] 장광용" },
       ],
     },
     {
