@@ -232,29 +232,6 @@ export default function Location() {
           animation: window.google.maps.Animation.DROP,
         });
 
-        // 정보창 생성
-        const infoWindow = new window.google.maps.InfoWindow({
-          content: `
-            <div style="padding: 2px 10px 6px 10px; text-align: center; min-width: 200px; max-width: 260px; margin: 0;">
-              <div style="font-weight: 500; color: #5a4a3a; font-size: 15px; margin: 0 0 2px 0; padding: 0; font-family: 'Noto Serif KR', serif; letter-spacing: -0.02em;">
-                ${invite.venue}
-              </div>
-              <div style="color: #8b7a6a; font-size: 13px; line-height: 1.3; margin: 0; padding: 0; font-family: 'Noto Sans KR', sans-serif; font-weight: 300; letter-spacing: -0.01em;">
-                ${loc.address}
-              </div>
-            </div>
-          `,
-          pixelOffset: new window.google.maps.Size(0, -10),
-        });
-
-        // 마커 클릭 시 정보창 표시
-        marker.addListener("click", () => {
-          infoWindow.open(map, marker);
-        });
-
-        // 처음 로드 시 정보창 자동 표시
-        infoWindow.open(map, marker);
-
         console.log("Google Maps 지도 생성 성공");
         setMapLoaded(true);
         setMapError(null);

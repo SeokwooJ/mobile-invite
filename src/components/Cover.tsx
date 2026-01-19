@@ -50,13 +50,13 @@ export default function Cover() {
         </p>
 
         <h1
-          className="text-2xl sm:text-4xl font-bold mb-4 text-[#5a4a3a] tracking-wide whitespace-nowrap px-2"
+          className="text-2xl sm:text-4xl font-bold mb-32 text-[#5a4a3a] tracking-wide whitespace-nowrap px-2"
           style={{ fontFamily: "serif", fontWeight: 700 }}
         >
           {invite.groom} ♥ {invite.bride}
         </h1>
 
-        <div className="mb-4">
+        <div className="mb-8">
           <p className="text-base text-[#6b5d4a] font-light leading-relaxed">
             장광용의 아들 장석우
             <br />
@@ -65,12 +65,6 @@ export default function Cover() {
         </div>
 
         <div className="w-16 h-px bg-[#d4c4b0] mx-auto"></div>
-
-        <p className="text-base text-[#6b5d4a] mt-6 font-light leading-relaxed">
-          {invite.date}
-          <br />
-          {invite.time}
-        </p>
       </div>
     </section>
   );
